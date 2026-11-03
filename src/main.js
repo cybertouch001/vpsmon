@@ -325,8 +325,8 @@ class Battle {
   setFace(side, fc, ph){ this.faces[side]=fc; this.photos[side]=ph; if(this.mons[side]) stage.setFace(this.mons[side], fc); this.renderCards(); }
   layout(){
     const por = stage.portrait;
-    this.pos = por ? [V(-0.62,0,1.45), V(0.95,0,-1.65)] : [V(-2.3,0,0.85), V(2.3,0,-0.85)];
-    const cam = por ? { pos:V(0.3,2.85,9.6), look:V(0.1,0.2,0) } : { pos:V(0.0,2.6,9.6), look:V(0.4,0.95,0) };
+    this.pos = por ? [V(-0.9,0,1.45), V(1.05,0,-1.7)] : [V(-2.3,0,0.85), V(2.3,0,-0.85)];
+    const cam = por ? { pos:V(-0.15,2.85,9.8), look:V(0.05,0.2,0) } : { pos:V(0.0,2.6,9.6), look:V(0.4,0.95,0) };
     // my side is always the near spot
     this.spot = s => s===this.me ? this.pos[0] : this.pos[1];
     stage.camTarget = cam; this.cam = cam;
@@ -554,7 +554,7 @@ function shade(hex, amt){ const n=parseInt(hex.slice(1),16); let r=(n>>16)+amt, 
 function banner(t, ms=1200, big){ const el=$('#banner'); el.textContent=t; el.classList.add('show'); el.style.color = big? '#ffcc33':'#fff'; clearTimeout(banner._t); banner._t=setTimeout(()=>el.classList.remove('show'), ms); }
 function callout(t,color){ const el=document.createElement('div'); el.className='callout'; el.textContent=t; el.style.color=color; $('#callouts').appendChild(el); setTimeout(()=>el.remove(),1300); }
 function dmgNum(mon, text, cls){ const p=stage.worldToScreen(mon.holder.position.clone().add(V(0,2.0,0))); const el=document.createElement('div'); el.className='dnum '+cls; el.textContent=text; el.style.left=(p.x+(Math.random()-0.5)*30)+'px'; el.style.top=p.y+'px'; $('#dmg').appendChild(el); setTimeout(()=>el.remove(),1150); }
-function hitFlash(mon, type){ const col=new THREE.Color(TYPE_INFO[type]?TYPE_INFO[type].color:'#ffffff'); fx.tween(0.35,k=>{ const a=k<0.2?1:(1-k)/0.8; mon.mats.forEach(m=>{ m.emissive.copy(col).multiplyScalar(a*1.2); }); }); }
+function hitFlash(mon, type){ const col=new THREE.Color(TYPE_INFO[type]?TYPE_INFO[type].color:'#ffffff'); fx.tween(0.35,k=>{ const a=k<0.2?1:(1-k)/0.8; mon.mats.forEach(m=>{ m.emissive.copy(col).multiplyScalar(a*0.55); }); }); }
 function knock(mon, from){ const p0=mon.holder.position.clone(); const dir=p0.clone().sub(from).setY(0).normalize(); fx.tween(0.4,k=>{ const o=Math.sin(k*Math.PI)*0.35*(1-k*0.3); mon.holder.position.copy(p0).addScaledVector(dir,o); }); }
 
 // ---------- HUD wiring ----------
