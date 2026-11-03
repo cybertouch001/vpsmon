@@ -5,7 +5,7 @@ val signingProps = Properties().apply { val p = System.getenv("FF_KEYSTORE_PROPS
 android {
     namespace = "bot.tab.sites.facefang"
     compileSdk = 35
-    defaultConfig { applicationId = "bot.tab.sites.facefang"; minSdk = 24; targetSdk = 35; versionCode = 1; versionName = "1.0.0" }
+    defaultConfig { applicationId = "bot.tab.sites.facefang"; minSdk = 24; targetSdk = 35; versionCode = 2; versionName = "1.0.1" }
     signingConfigs { create("release") { if (signingProps.isNotEmpty()) { storeFile = file(signingProps.getProperty("storeFile")); storePassword = signingProps.getProperty("storePassword"); keyAlias = signingProps.getProperty("keyAlias"); keyPassword = signingProps.getProperty("keyPassword") } } }
     buildTypes { release { isMinifyEnabled = false; if (signingProps.isNotEmpty()) signingConfig = signingConfigs.getByName("release") } }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

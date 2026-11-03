@@ -508,7 +508,7 @@ async function api(req, env, url) {
     }
   }
   const q = (k) => body[k] !== void 0 ? body[k] : url.searchParams.get(k);
-  if (path === "health") return J({ ok: true, game: "FaceFang Arena", v: 1 });
+  if (path === "health") return J({ ok: true, game: "VPSmon", v: 2 });
   if (path === "quick") {
     const team = body.team;
     if (!validTeam(team)) return J({ error: "Pick 3 different monsters" }, 400);
@@ -652,11 +652,12 @@ var worker_default = {
         return J({ error: "Server error", detail: String(e && e.message || e) }, 500);
       }
     }
+    if (url.pathname === "/download/FaceFang-Arena.apk") return Response.redirect(url.origin + "/download/VPSmon.apk", 301);
     const res = await env.ASSETS.fetch(req);
     if (url.pathname.endsWith(".apk") && res.ok) {
       const h = new Headers(res.headers);
       h.set("content-type", "application/vnd.android.package-archive");
-      h.set("content-disposition", 'attachment; filename="FaceFang-Arena.apk"');
+      h.set("content-disposition", 'attachment; filename="VPSmon.apk"');
       return new Response(res.body, { status: 200, headers: h });
     }
     if (/\.(glb|jpg|woff2|png)$/.test(url.pathname) && res.ok) {

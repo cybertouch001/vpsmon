@@ -1,5 +1,5 @@
 
-// FaceFang Arena — battle rules (shared by browser and server)
+// VPSmon — battle rules (shared by browser and server)
 export const TYPES = ['fire','water','grass','electric','ice','earth','shadow','wind','neutral'];
 export const TYPE_INFO = {
   fire:{label:'Fire',color:'#ff6a2b'}, water:{label:'Water',color:'#2f9bff'}, grass:{label:'Grass',color:'#3fc75a'},

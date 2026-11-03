@@ -1,10 +1,10 @@
-# FaceFang Arena
+# VPSmon
 
 An original 3D monster battle game that runs in the browser (phone and desktop).
 Put your own face on your monster, then battle a friend online with a 5-letter room code,
 use Quick Match (random online player, bot fallback), or fight the CPU (Easy / Normal / Hard).
 
-Play: https://facefang.sites.tab.bot/
+Play: https://vpsmon.sites.tab.bot/
 
 ## Features
 - 8 original monsters, 8 types (Fire, Water, Grass, Electric, Ice, Earth, Shadow, Wind), 4 moves each plus an Ultimate

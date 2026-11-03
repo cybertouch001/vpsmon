@@ -109,7 +109,8 @@ function setupUI(){
     try{ const r=await fetch(`api/peek?code=${c}`); const j=await r.json(); if(!j.exists){ $('#joinErr').textContent='Room not found. Check the code.'; return; } if(j.full){ $('#joinErr').textContent='That room is already full.'; return; } }catch(e){ $('#joinErr').textContent='No internet connection?'; return; }
     $('#joinErr').textContent=''; joinCode=c; openTeam('join');
   };
-  if(isMobile && !navigator.userAgent.includes('FaceFangApp')){} else { $('#apkLink').parentElement.style.display = navigator.userAgent.includes('FaceFangApp') ? 'none' : ''; }
+  const inApp = /FaceFangApp|VPSmonApp/.test(navigator.userAgent);
+  if(isMobile && !inApp){} else { $('#apkLink').parentElement.style.display = inApp ? 'none' : ''; }
   setupPhoto(); setupTeam(); setupHud(); setupSettings();
   window.addEventListener('popstate', ()=>{});
 }
@@ -256,11 +257,11 @@ let lobbyNet = null;
 function openLobby(j){
   show('lobby'); setMenuCam(); $('#lobbyCode').textContent = j.code;
   const link = `${location.origin}${location.pathname}?room=${j.code}`;
-  const msg = `Let's battle in FaceFang Arena! 👊 Room code: ${j.code}\n${link}`;
+  const msg = `Let's battle in VPSmon! 👊 Room code: ${j.code}\n${link}`;
   $('#shareWa').href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
   $('#shareCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText(msg); toast('Link copied ✓'); }catch(e){ toast(link, 5000); } };
   $('#shareMore').style.display = navigator.share ? '' : 'none';
-  $('#shareMore').onclick=()=>navigator.share({title:'FaceFang Arena', text:msg}).catch(()=>{});
+  $('#shareMore').onclick=()=>navigator.share({title:'VPSmon', text:msg}).catch(()=>{});
   lobbyNet = new Net(j.code, j.token, j.seat);
   lobbyNet.onView = v=>{ if(v.status==='battle' && v.players[1]){ const n=lobbyNet; lobbyNet=null; n.onView=null; startOnline(n, v); } };
   lobbyNet.start();

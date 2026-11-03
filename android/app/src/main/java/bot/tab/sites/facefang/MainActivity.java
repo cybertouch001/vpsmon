@@ -24,9 +24,12 @@ import androidx.core.content.FileProvider;
 import java.io.File;
 import java.util.ArrayList;
 
-/** FaceFang Arena: a thin full-screen WebView around https://facefang.sites.tab.bot/ with camera + gallery for the face photo. */
+/** VPSmon: a thin full-screen WebView around https://vpsmon.sites.tab.bot/ with camera + gallery for the face photo.
+ *  (Package id stays bot.tab.sites.facefang so this build installs over the first release.) */
 public class MainActivity extends Activity {
-    private static final String HOME = "https://facefang.sites.tab.bot/";
+    private static final String HOME = "https://vpsmon.sites.tab.bot/";
+    private static boolean ours(Uri u) { return u != null && ("vpsmon.sites.tab.bot".equals(u.getHost()) || "facefang.sites.tab.bot".equals(u.getHost())); }
+    private static String fix(Uri u) { return u.toString().replace("://facefang.sites.tab.bot", "://vpsmon.sites.tab.bot"); }
     private static final int REQ_FILE = 11, REQ_CAM_PERM = 12;
     private WebView web;
     private ValueCallback<Uri[]> pending;
@@ -46,16 +49,17 @@ public class MainActivity extends Activity {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setAllowFileAccess(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        s.setUserAgentString(s.getUserAgentString() + " FaceFangApp/1.0");
+        s.setUserAgentString(s.getUserAgentString() + " VPSmonApp/1.0.1");
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
                 Uri u = r.getUrl();
-                if ("facefang.sites.tab.bot".equals(u.getHost())) return false;
+                if ("vpsmon.sites.tab.bot".equals(u.getHost())) return false;
+                if (ours(u)) { v.loadUrl(fix(u)); return true; }
                 try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (ActivityNotFoundException e) { }
                 return true;
             }
             @Override public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-                if (r.isForMainFrame()) v.loadData("<html><body style='background:#0b1026;color:#fff;font-family:sans-serif;text-align:center;padding-top:40vh'><h2>No internet</h2><p>FaceFang Arena needs internet.</p><button style='font-size:18px;padding:12px 24px;border-radius:12px' onclick='location.href=\"" + HOME + "\"'>Try again</button></body></html>", "text/html", "utf-8");
+                if (r.isForMainFrame()) v.loadData("<html><body style='background:#0b1026;color:#fff;font-family:sans-serif;text-align:center;padding-top:40vh'><h2>No internet</h2><p>VPSmon needs internet.</p><button style='font-size:18px;padding:12px 24px;border-radius:12px' onclick='location.href=\"" + HOME + "\"'>Try again</button></body></html>", "text/html", "utf-8");
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -70,7 +74,7 @@ public class MainActivity extends Activity {
             @Override public void onPermissionRequest(PermissionRequest request) { request.deny(); }
         });
         Uri data = getIntent() != null ? getIntent().getData() : null;
-        web.loadUrl(data != null && "facefang.sites.tab.bot".equals(data.getHost()) ? data.toString() : HOME);
+        web.loadUrl(ours(data) ? fix(data) : HOME);
         hideBars();
     }
 
@@ -132,5 +136,5 @@ public class MainActivity extends Activity {
     }
     @Override protected void onPause() { super.onPause(); web.onPause(); }
     @Override protected void onResume() { super.onResume(); web.onResume(); }
-    @Override protected void onNewIntent(Intent i) { super.onNewIntent(i); Uri d = i.getData(); if (d != null && "facefang.sites.tab.bot".equals(d.getHost())) web.loadUrl(d.toString()); }
+    @Override protected void onNewIntent(Intent i) { super.onNewIntent(i); Uri d = i.getData(); if (ours(d)) web.loadUrl(fix(d)); }
 }

@@ -75,7 +75,7 @@ async function api(req, env, url){
   let body = {};
   if(req.method==='POST'){ try{ body = await req.json(); }catch(e){ return J({error:'bad json'},400); } }
   const q = (k)=> body[k]!==undefined ? body[k] : url.searchParams.get(k);
-  if(path==='health') return J({ok:true, game:'FaceFang Arena', v:1});
+  if(path==='health') return J({ok:true, game:'VPSmon', v:2});
   if(path==='quick'){
     const team = body.team; if(!E.validTeam(team)) return J({error:'Pick 3 different monsters'},400);
     // try to claim someone who is already waiting (seen in the last 20 s)
@@ -178,8 +178,9 @@ export default {
       if(req.method==='OPTIONS') return new Response(null,{headers:{'access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'GET,POST'}});
       try{ return await api(req, env, url); }catch(e){ return J({error:'Server error', detail:String(e && e.message || e)},500); }
     }
+    if(url.pathname==='/download/FaceFang-Arena.apk') return Response.redirect(url.origin+'/download/VPSmon.apk', 301);
     const res = await env.ASSETS.fetch(req);
-    if(url.pathname.endsWith('.apk') && res.ok){ const h=new Headers(res.headers); h.set('content-type','application/vnd.android.package-archive'); h.set('content-disposition','attachment; filename="FaceFang-Arena.apk"'); return new Response(res.body,{status:200,headers:h}); }
+    if(url.pathname.endsWith('.apk') && res.ok){ const h=new Headers(res.headers); h.set('content-type','application/vnd.android.package-archive'); h.set('content-disposition','attachment; filename="VPSmon.apk"'); return new Response(res.body,{status:200,headers:h}); }
     if(/\.(glb|jpg|woff2|png)$/.test(url.pathname) && res.ok){
       const h = new Headers(res.headers); h.set('cache-control','public, max-age=604800');
       return new Response(res.body, {status:res.status, headers:h});

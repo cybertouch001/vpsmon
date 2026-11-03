@@ -183,3 +183,15 @@ h2{margin:0;font-size:24px;text-shadow:0 2px 0 rgba(0,0,0,.4)}
 .radar span{font:400 40px 'Lilita One';color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.4)}
 @keyframes radar{0%{transform:scale(.2);opacity:1}100%{transform:scale(1);opacity:0}}
 .botchip{font:900 9px Nunito;background:#5ee7ff;color:#002;padding:1px 5px;border-radius:6px}
+
+/* VPSmon wordmark */
+.logo .word{display:flex;flex-direction:row;align-items:baseline;line-height:.9}
+.logo .word .l1,.logo .word .l2{margin-top:0;padding:0 .02em}
+.logo .word .l2{margin-left:.02em}
+.logo .word .l1{font-size:72px}.logo .word .l2{font-size:72px}
+.logo.big .word .l1,.logo.big .word .l2{font-size:86px}
+.logo small{letter-spacing:7px;font-size:15px;margin-top:10px;padding-left:7px}
+@media (min-aspect-ratio:1/1){ .logo .word .l1,.logo .word .l2{font-size:62px} }
+@media (max-height:640px) and (max-aspect-ratio:1/1){ .logo .word .l1,.logo .word .l2{font-size:54px} }
+@media (max-aspect-ratio:1/1){ #home .logo{margin-top:calc(50px + var(--safeT,0px))} #home .logo .word .l1,#home .logo .word .l2{font-size:66px} }
+@media (max-height:640px) and (max-aspect-ratio:1/1){ #home .logo{margin-top:calc(46px + var(--safeT,0px))} #home .logo .word .l1,#home .logo .word .l2{font-size:50px} }
