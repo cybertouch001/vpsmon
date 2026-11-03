@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1026">
+<title>FaceFang Arena — put your face on a monster and battle</title>
+<meta name="description" content="A 3D monster battle game. Put your own face on your monster and battle a friend online or the CPU.">
+<meta property="og:title" content="FaceFang Arena">
+<meta property="og:description" content="Put your face on a 3D monster and battle your friends online.">
+<meta property="og:image" content="https://facefang.sites.tab.bot/assets/og.jpg">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css?v=__V__">
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vignette"></div>
+<div id="flash"></div>
+
+<div id="loading" class="screen show">
+  <div class="logo big"><span class="l1">FACE</span><span class="l2">FANG</span><small>ARENA</small></div>
+  <div class="bar"><i id="loadbar"></i></div>
+  <p id="loadtxt">Waking up the monsters…</p>
+</div>
+
+<div id="home" class="screen">
+  <div class="topbar">
+    <button class="icon" id="btnSettings" aria-label="Settings">⚙️</button>
+    <button class="icon" id="btnHow" aria-label="How to play">❓</button>
+  </div>
+  <div class="logo"><span class="l1">FACE</span><span class="l2">FANG</span><small>ARENA</small></div>
+  <div class="spacer"></div>
+  <div class="trainer glass" id="trainerCard">
+    <div class="avatar" id="homeAvatar"></div>
+    <div class="tinfo">
+      <input id="nameInput" maxlength="14" placeholder="Your name" autocomplete="off">
+      <div class="tstats"><span id="tLevel">Lv 1</span> · <span id="tWins">0 wins</span></div>
+      <div class="xpbar"><i id="tXp"></i></div>
+    </div>
+    <button class="btn small ghost" id="btnFace">📷 My Face</button>
+  </div>
+  <div class="menu">
+    <button class="btn primary" id="btnQuick"><b>⚡ Quick Match</b><small>Fight a random online player</small></button>
+    <button class="btn blue" id="btnHost"><b>👥 Play with a Friend</b><small>Create a room, share the code</small></button>
+    <div class="row two"><button class="btn green" id="btnJoin"><b>🔑 Join Code</b></button><button class="btn purple" id="btnCpu"><b>🤖 vs CPU</b></button></div>
+  </div>
+  <div class="foot"><a id="apkLink" href="download/FaceFang-Arena.apk">📱 Android app</a> · <a href="#" id="btnCredits">Credits</a></div>
+</div>
+
+<div id="photo" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2>My Face</h2></div>
+  <div class="editor glass">
+    <div class="cropwrap"><canvas id="cropCanvas" width="600" height="600"></canvas><div class="cropmask"></div><p class="crophint" id="cropHint">Take a selfie or pick a photo</p></div>
+    <div class="row">
+      <label class="btn small blue file">🤳 Selfie<input type="file" accept="image/*" capture="user" id="fileCam"></label>
+      <label class="btn small blue file">🖼️ Gallery<input type="file" accept="image/*" id="fileGal"></label>
+    </div>
+    <div class="row slider"><span>🔍</span><input type="range" id="zoom" min="1" max="4" step="0.01" value="1"><button class="icon" id="rot">⟳</button></div>
+    <p class="note">Drag to move · pinch or slide to zoom · fit your face inside the circle</p>
+    <div class="row"><button class="btn small ghost" id="faceRemove">Remove</button><button class="btn small primary" id="faceSave">✔ Use this face</button></div>
+  </div>
+  <p class="privacy">🔒 Your photo stays on your phone. In an online match it is shared only with your opponent, and the server deletes it when the room closes.</p>
+</div>
+
+<div id="team" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2 id="teamTitle">Pick 3 Monsters</h2></div>
+  <div class="spacer"></div>
+  <div class="mInfo glass" id="mInfo"></div>
+  <div class="cards" id="cards"></div>
+  <div class="arenas" id="arenaRow"></div>
+  <div class="diffRow" id="diffRow"><span>CPU level</span><div class="seg" id="diffSeg"><button data-d="easy">Easy</button><button data-d="normal">Normal</button><button data-d="hard">Hard</button></div></div>
+  <div class="teamBar">
+    <div class="slots" id="slots"></div>
+    <button class="btn primary go" id="btnGo" disabled>Battle!</button>
+  </div>
+</div>
+
+<div id="join" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2>Join a Friend</h2></div>
+  <div class="glass panel center">
+    <p>Enter the 5-letter room code</p>
+    <input id="codeInput" class="codein" maxlength="5" autocomplete="off" autocapitalize="characters" placeholder="ABCDE">
+    <button class="btn primary" id="btnJoinNext">Next: pick monsters</button>
+    <p class="err" id="joinErr"></p>
+  </div>
+</div>
+
+<div id="lobby" class="screen">
+  <div class="head"><button class="icon back" id="lobbyCancel">←</button><h2>Room ready!</h2></div>
+  <div class="glass panel center">
+    <p>Send this code to your friend</p>
+    <div class="bigcode" id="lobbyCode">-----</div>
+    <div class="row">
+      <a class="btn small green" id="shareWa" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="btn small blue" id="shareCopy">Copy link</button>
+      <button class="btn small ghost" id="shareMore">Share…</button>
+    </div>
+    <div class="waiting"><span class="dots"><i></i><i></i><i></i></span> Waiting for your friend to join…</div>
+    <p class="note">They open the link (or tap “Join with Code”), pick 3 monsters, and the battle starts.</p>
+  </div>
+</div>
+
+<div id="search" class="screen">
+  <div class="head"><button class="icon back" id="searchCancel">←</button><h2>Quick Match</h2></div>
+  <div class="glass panel center">
+    <div class="radar"><i></i><i></i><i></i><span id="searchT">0</span></div>
+    <p id="searchTxt">Looking for an online player…</p>
+    <p class="note">If nobody is online right now, you'll fight a bot instead.</p>
+  </div>
+</div>
+
+<div id="hud">
+  <div class="hudTop">
+    <button class="icon" id="btnQuit" aria-label="Menu">☰</button>
+    <div class="fighter foe glass" id="foeCard"></div>
+    <button class="icon" id="btnMute" aria-label="Sound">🔊</button>
+  </div>
+  <div id="banner"></div>
+  <div id="callouts"></div>
+  <div id="emoteBubbles"></div>
+  <div class="hudBottom">
+    <div class="fighter me glass" id="meCard"></div>
+    <div class="actions" id="actions">
+      <div class="moves" id="moves"></div>
+      <div class="subrow">
+        <button class="btn small ghost" id="btnSwitch">🔄 Switch</button>
+        <button class="btn small ult" id="btnUlt">⚡ ULTIMATE</button>
+        <button class="btn small ghost" id="btnEmote">💬</button>
+      </div>
+    </div>
+    <div class="waitbox glass" id="waitbox"><span class="dots"><i></i><i></i><i></i></span> <span id="waitTxt">Waiting for opponent…</span><div class="timer" id="timer"></div></div>
+  </div>
+  <div class="sheet glass" id="switchSheet"><h3>Switch monster</h3><div id="switchList"></div><button class="btn small ghost" id="switchClose">Cancel</button></div>
+  <div class="sheet glass" id="emoteSheet"><div class="emotes" id="emoteList"></div></div>
+  <div class="sheet glass" id="quitSheet"><h3>Leave battle?</h3><p class="note">Leaving counts as a loss.</p><div class="row"><button class="btn small ghost" id="quitNo">Keep fighting</button><button class="btn small red" id="quitYes">Leave</button></div></div>
+</div>
+
+<div id="result" class="screen">
+  <div class="resultBox glass">
+    <h1 id="resTitle">VICTORY!</h1>
+    <p id="resSub"></p>
+    <div class="xpgain" id="resXp"></div>
+    <div class="row col">
+      <button class="btn primary" id="btnRematch">🔁 Rematch</button>
+      <button class="btn ghost" id="btnHome">🏠 Home</button>
+    </div>
+    <p class="note" id="resNote"></p>
+  </div>
+</div>
+
+<div id="settings" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2>Settings</h2></div>
+  <div class="glass panel">
+    <div class="set"><span>Graphics</span><div class="seg" id="qSeg"><button data-q="high">High</button><button data-q="low">Low (faster)</button></div></div>
+    <div class="set"><span>Sound effects</span><label class="sw"><input type="checkbox" id="setSound"><i></i></label></div>
+    <div class="set"><span>Music</span><label class="sw"><input type="checkbox" id="setMusic"><i></i></label></div>
+    <div class="set"><span>Vibration</span><label class="sw"><input type="checkbox" id="setVibe"><i></i></label></div>
+    <div class="set"><span>Share my face in online matches</span><label class="sw"><input type="checkbox" id="setShare"><i></i></label></div>
+    <p class="note" id="fpsNote"></p>
+  </div>
+</div>
+
+<div id="howto" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2>How to Play</h2></div>
+  <div class="glass panel scroll" id="howBody"></div>
+</div>
+
+<div id="credits" class="screen">
+  <div class="head"><button class="icon back" data-back>←</button><h2>Credits</h2></div>
+  <div class="glass panel scroll">
+    <p><b>FaceFang Arena</b> — an original game.</p>
+    <p>3D monster models: <b>Ultimate Monsters</b> by Quaternius (quaternius.com), CC0 1.0 public domain. Renamed and reworked for this game.</p>
+    <p>Sky and ground photos (HDRIs): Poly Haven (polyhaven.com), CC0 — Meadow 2, Kloofendal 48d Partly Cloudy, Snowy Field and Shanghai Bund.</p>
+    <p>Fonts: Lilita One and Nunito (SIL Open Font License).</p>
+    <p>3D engine: three.js (MIT). Sound and music are synthesised in the game.</p>
+    <p>All creature names, moves and the game itself are original.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="dmg"></div>
+<canvas id="confetti"></canvas>
+<script src="js/game.js?v=__V__" type="module"></script>
+</body>
+</html>
